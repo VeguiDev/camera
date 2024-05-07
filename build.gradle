@@ -47,6 +47,11 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             args = ['--username', 'henkelmax']
             source sourceSets.main
+            jvmArg  '-Dminecraft.api.auth.host=https://nope.invalid'
+            jvmArg  '-Dminecraft.api.account.host=https://nope.invalid'
+            jvmArg  '-Dminecraft.api.session.host=https://nope.invalid'
+            jvmArg  '-Dminecraft.api.services.host=https://nope.invalid'
+
             mods {
                 camera {
                     source sourceSets.main
@@ -90,6 +95,8 @@ dependencies {
     runtimeOnly fg.deobf("de.maxhenkel.corelib:corelib:${mod_minecraft_version}-${corelib_version}:javadoc")
 
     compileOnly fg.deobf("curse.maven:Hwyla-253449:${hwyla_version}")
+
+    implementation fg.deobf("curse.maven:spark-361579:3767277")
 
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
 

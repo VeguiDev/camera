@@ -29,9 +29,12 @@ public class TextureCache {
     }
 
     public void addImage(UUID uuid, BufferedImage image) {
+
         if (awaitingImages.containsKey(uuid)) {
             awaitingImages.remove(uuid);
         }
+
+        ClientCache.saveImage(uuid, image);
 
         ResourceLocation resourceLocation = new ResourceLocation(Main.MODID, "texures/camera/" + uuid.toString());
         CameraTextureObject cameraTextureObject = new CameraTextureObject(ImageTools.toNativeImage(image));
@@ -57,6 +60,13 @@ public class TextureCache {
                 }
             }
             awaitingImages.put(uuid, System.currentTimeMillis());
+
+            BufferedImage image = ClientCache.loadImage(uuid);
+            if (image != null) {
+                addImage(uuid, image);
+                return false;
+            }
+
             Main.SIMPLE_CHANNEL.sendToServer(new MessageRequestImage(uuid));
 
             return true;

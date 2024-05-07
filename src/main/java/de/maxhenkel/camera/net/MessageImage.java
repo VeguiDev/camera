@@ -11,6 +11,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.UUID;
+import java.util.concurrent.Executors;
 
 public class MessageImage implements Message<MessageImage> {
 
@@ -38,7 +39,12 @@ public class MessageImage implements Message<MessageImage> {
     public void executeClientSide(NetworkEvent.Context context) {
         try {
             BufferedImage img = ImageTools.fromBytes(image);
-            Minecraft.getInstance().submitAsync(() -> TextureCache.instance().addImage(uuid, img));
+
+//            Minecraft.getInstance().submitAsync(() -> {
+//                TextureCache.instance().addImage(uuid, img);
+//            });
+
+            Executors.newCachedThreadPool().execute(() -> TextureCache.instance().addImage(uuid, img));
         } catch (IOException e) {
             e.printStackTrace();
         }
