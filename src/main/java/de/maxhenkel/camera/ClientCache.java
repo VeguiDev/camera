@@ -15,8 +15,6 @@ public class ClientCache {
 
     private static final String cache_folder = Minecraft.getInstance().gameDirectory + "/camera_cache/";
 
-    private static Map<UUID, BufferedImage> clientImageCache = new HashMap<>();
-
     public static String getImageRoute(UUID id) {
 
         List<String> idParts = Arrays.asList(id.toString().split("-"));
@@ -57,8 +55,6 @@ public class ClientCache {
                 return;
             }
 
-            clientImageCache.put(uuid, img);
-
             ImageIO.write(img, "png", image);
         } catch (IOException e) {
             e.printStackTrace();
@@ -66,12 +62,13 @@ public class ClientCache {
 
     }
 
+    public static boolean imageExists(UUID uuid) {
+        File image = new File(getImageRoute(uuid));
+        return image.exists();
+    }
+
     public static BufferedImage loadImage(UUID uuid) {
         try {
-
-            if(clientImageCache.containsKey(uuid)) {
-                return clientImageCache.get(uuid);
-            }
 
             File image = new File(getImageRoute(uuid));
 

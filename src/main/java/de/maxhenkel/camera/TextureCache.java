@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Executors;
 
 @OnlyIn(Dist.CLIENT)
 public class TextureCache {
@@ -61,9 +62,13 @@ public class TextureCache {
             }
             awaitingImages.put(uuid, System.currentTimeMillis());
 
-            BufferedImage image = ClientCache.loadImage(uuid);
-            if (image != null) {
-                addImage(uuid, image);
+            if(ClientCache.imageExists(uuid)) {
+                Executors.newCachedThreadPool().submit(() -> {
+                    BufferedImage img = ClientCache.loadImage(uuid);
+                    if (img != null) {
+                        addImage(uuid, img);
+                    }
+                });
                 return false;
             }
 

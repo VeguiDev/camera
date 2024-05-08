@@ -25,6 +25,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.common.thread.SidedThreadGroups;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
@@ -467,5 +468,37 @@ public class ImageEntity extends Entity {
         setItem(ItemStack.of(compound.getCompound("item")));
 
         updateBoundingBox();
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public int lod() {
+
+        Entity ent = getEntity();
+        PlayerEntity player = Minecraft.getInstance().player;
+
+        if (ent == null || player == null) {
+            return 4;
+        }
+
+        double distance = ent.distanceTo(player);
+
+        if(distance < 10) {
+            return 0;
+        }
+
+        if(distance < 15) {
+            return 1;
+        }
+
+        if(distance < 20) {
+            return 2;
+        }
+
+        if(distance < 25) {
+            return 3;
+        }
+
+        return 4;
+
     }
 }

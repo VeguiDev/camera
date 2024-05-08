@@ -2,6 +2,7 @@ package de.maxhenkel.camera.entities;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import de.maxhenkel.camera.EntityUtil;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
 import net.minecraft.client.Minecraft;
@@ -25,6 +26,7 @@ import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
+import java.util.concurrent.Executors;
 
 public class ImageRenderer extends EntityRenderer<ImageEntity> {
 
@@ -45,6 +47,13 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
 
     @Override
     public void render(ImageEntity entity, float f1, float f2, MatrixStack matrixStack, IRenderTypeBuffer buffer1, int light) {
+
+        int lod = entity.lod();
+
+        if(lod >= 3 || !EntityUtil.isLookingAtEntity(entity, mc.player)){
+            return;
+        }
+
         int imageLight = WorldRenderer.getLightColor(entity.level, entity.getCenterPosition());
         renderImage(entity.getImageUUID().orElse(null), entity.getFacing(), entity.getFrameWidth(), entity.getFrameHeight(), matrixStack, buffer1, imageLight);
         renderBoundingBox(entity, matrixStack, buffer1);
