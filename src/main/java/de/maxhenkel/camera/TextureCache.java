@@ -69,7 +69,7 @@ public class TextureCache {
                         addImage(uuid, img);
                     }
                 });
-                return false;
+                return true;
             }
 
             Main.SIMPLE_CHANNEL.sendToServer(new MessageRequestImage(uuid));
