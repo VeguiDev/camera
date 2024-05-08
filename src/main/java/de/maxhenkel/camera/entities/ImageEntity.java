@@ -486,15 +486,15 @@ public class ImageEntity extends Entity {
             return 0;
         }
 
-        if(distance < 15) {
+        if(distance < 16) {
             return 1;
         }
 
-        if(distance < 20) {
+        if(distance < 32) {
             return 2;
         }
 
-        if(distance < 25) {
+        if(distance < 64) {
             return 3;
         }
 
