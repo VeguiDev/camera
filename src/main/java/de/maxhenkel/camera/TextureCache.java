@@ -31,11 +31,15 @@ public class TextureCache {
 
     public void addImage(UUID uuid, BufferedImage image) {
 
-        if (awaitingImages.containsKey(uuid)) {
-            awaitingImages.remove(uuid);
+        if(image == null) {
+            ClientCache.clearImage(uuid);
+            return;
         }
 
-        ClientCache.saveImage(uuid, image);
+        if (awaitingImages.containsKey(uuid)) {
+            awaitingImages.remove(uuid);
+            ClientCache.saveImage(uuid, image);
+        }
 
         ResourceLocation resourceLocation = new ResourceLocation(Main.MODID, "texures/camera/" + uuid.toString());
         CameraTextureObject cameraTextureObject = new CameraTextureObject(ImageTools.toNativeImage(image));

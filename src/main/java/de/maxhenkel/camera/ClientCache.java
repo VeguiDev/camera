@@ -39,6 +39,13 @@ public class ClientCache {
         }
     }
 
+    public static void clearImage(UUID uuid) {
+        File image = new File(getImageRoute(uuid, 0));
+        if (image.exists()) {
+            image.delete();
+        }
+    }
+
     public static void saveImageLods(UUID uuid, BufferedImage img) {
 
         List<BufferedImage> images = levelOfDetail(img);
