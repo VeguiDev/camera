@@ -36,16 +36,16 @@ public class TextureCache {
             return;
         }
 
+        ResourceLocation resourceLocation = new ResourceLocation(Main.MODID, "texures/camera/" + uuid.toString());
+        CameraTextureObject cameraTextureObject = new CameraTextureObject(ImageTools.toNativeImage(image));
+        Minecraft.getInstance().getTextureManager().register(resourceLocation, cameraTextureObject);
+        clientImageCache.put(uuid, cameraTextureObject);
+        clientResourceCache.put(uuid, resourceLocation);
+
         if (awaitingImages.containsKey(uuid)) {
             awaitingImages.remove(uuid);
             ClientCache.saveImage(uuid, image);
         }
-
-        ResourceLocation resourceLocation = new ResourceLocation(Main.MODID, "texures/camera/" + uuid.toString());
-        CameraTextureObject cameraTextureObject = new CameraTextureObject(ImageTools.toNativeImage(image));
-        clientImageCache.put(uuid, cameraTextureObject);
-        clientResourceCache.put(uuid, resourceLocation);
-        Minecraft.getInstance().getEntityRenderDispatcher().textureManager.register(resourceLocation, cameraTextureObject);
     }
 
     public ResourceLocation getImage(UUID uuid) {
@@ -70,7 +70,7 @@ public class TextureCache {
                 Executors.newCachedThreadPool().submit(() -> {
                     BufferedImage img = ClientCache.loadImage(uuid);
                     if (img != null) {
-                        addImage(uuid, img);
+                        ClientCache.saveImage(uuid, img);
                     }
                 });
                 return true;

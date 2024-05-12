@@ -16,6 +16,8 @@ public class ClientCache {
 
     private static final String cache_folder = Minecraft.getInstance().gameDirectory + "/camera_cache/";
 
+    private static final List<UUID> processing = new ArrayList<>();
+
     public static String getImageRoute(UUID id, int level) {
 
         List<String> idParts = Arrays.asList(id.toString().split("-"));
@@ -68,6 +70,8 @@ public class ClientCache {
 
     public static void saveImage(UUID uuid, BufferedImage img, int level, boolean saveLod) {
 
+        processing.add(uuid);
+
         try {
             File image = new File(getImageRoute(uuid, level));
             File imageFolder = image.getParentFile();
@@ -77,12 +81,15 @@ public class ClientCache {
             }
 
             if(image.exists()) {
+                image.delete();
                 return;
             }
 
             ImageIO.write(img, "png", image);
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            processing.remove(uuid);
         }
 
     }
@@ -112,20 +119,24 @@ public class ClientCache {
 
     public static boolean imageExists(UUID uuid) {
         File image = new File(getImageRoute(uuid, 0));
-        return image.exists();
+        if(image.exists() && !processing.contains(uuid)) {
+            return true;
+        }
+        return false;
     }
 
     public static BufferedImage loadImage(UUID uuid) {
+
+        File image = new File(getImageRoute(uuid, 0));
         try {
 
-            File image = new File(getImageRoute(uuid, 0));
-
-            if (!image.exists()) {
+            if (!image.exists() && !processing.contains(uuid)) {
                 return null;
             }
 
             return ImageIO.read(Files.newInputStream(image.toPath()));
         } catch (IOException e) {
+            image.delete();
             e.printStackTrace();
         }
         return null;
